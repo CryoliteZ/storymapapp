@@ -1,0 +1,2 @@
+include ':app', ':library'
+//project(':android-maps-utils').projectDir = new File('library/android-maps-utils')
