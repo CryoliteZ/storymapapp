@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-cs/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-cs/values.xml -->
     <eat-comment/>
     <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"Povolit"</string>
     <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"Ke spuštění aplikace <ns1:g id="APP_NAME">%1$s</ns1:g> je třeba aktivovat služby Google Play."</string>
@@ -10,10 +10,10 @@
     <string msgid="1701766622451829291" name="common_google_play_services_install_text_tablet">"Ke spuštění aplikace <ns1:g id="APP_NAME">%1$s</ns1:g> jsou potřeba služby Google Play, které v tabletu nemáte."</string>
     <string msgid="7442193194585196676" name="common_google_play_services_install_title">"Instalace služeb Google Play"</string>
     <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Chyba služeb Google Play"</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-cs/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-cs/values.xml -->
     <eat-comment/>
     <string msgid="9089562800660647919" name="common_google_play_services_unknown_issue">"Aplikace <ns1:g id="APP_NAME">%1$s</ns1:g> má potíže se službami Google Play. Pokud problém přetrvává, obraťte se na vývojáře s žádostí o pomoc."</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-cs/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-cs/values.xml -->
     <eat-comment/>
     <string msgid="1064791666906610763" name="common_google_play_services_unsupported_text">"Aplikace <ns1:g id="APP_NAME">%1$s</ns1:g> vyžaduje služby Google Play, které ve vašem zařízení nejsou podporovány. S žádostí o pomoc kontaktujte výrobce zařízení."</string>
     <string msgid="539866123733096737" name="common_google_play_services_unsupported_title">"Služby Google Play"</string>

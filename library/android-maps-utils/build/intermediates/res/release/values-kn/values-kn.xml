@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-kn/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-kn/values.xml -->
     <eat-comment/>
     <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"ಸಕ್ರಿಯಗೊಳಿಸು"</string>
     <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"Google Play ಸೇವೆಗಳನ್ನು ನೀವು ಸಕ್ರಿಯಗೊಳಿಸದ ಹೊರತು <ns1:g id="APP_NAME">%1$s</ns1:g> ಕಾರ್ಯನಿರ್ವಹಿಸುವುದಿಲ್ಲ."</string>
@@ -10,10 +10,10 @@
     <string msgid="1701766622451829291" name="common_google_play_services_install_text_tablet">"Google Play ಸೇವೆಗಳಿಲ್ಲದೆ ನಿಮ್ಮ ಟ್ಯಾಬ್ಲೆಟ್‍ನಿಂದ ಕಾಣೆಯಾಗಿರುವ <ns1:g id="APP_NAME">%1$s</ns1:g> ರನ್ ಆಗುವುದಿಲ್ಲ."</string>
     <string msgid="7442193194585196676" name="common_google_play_services_install_title">"Google Play ಸೇವೆಗಳನ್ನು ಪಡೆಯಿರಿ"</string>
     <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Google Play ಸೇವೆಗಳ ದೋಷ"</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-kn/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-kn/values.xml -->
     <eat-comment/>
     <string msgid="9089562800660647919" name="common_google_play_services_unknown_issue">"Google Play ಸೇವೆಗಳಲ್ಲಿ <ns1:g id="APP_NAME">%1$s</ns1:g> ಅಪ್ಲಿಕೇಶನ್ ಸಮಸ್ಯೆಯನ್ನು ಎದುರಿಸುತ್ತಿದೆ. ಸಮಸ್ಯೆ ಮುಂದುವರಿದರೆ, ಸಹಾಯಕ್ಕಾಗಿ ಡೆವಲಪರ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ."</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-kn/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-kn/values.xml -->
     <eat-comment/>
     <string msgid="1064791666906610763" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ನಿಮ್ಮ ಸಾಧನವು ಬೆಂಬಲಿಸದಿರುವಂತಹ Google Play ಸೇವೆಗಳನ್ನು ಅವಲಂಬಿಸಿದೆ. ಸಹಾಯಕ್ಕಾಗಿ ತಯಾರಕರನ್ನು ಸಂಪರ್ಕಿಸಿ."</string>
     <string msgid="539866123733096737" name="common_google_play_services_unsupported_title">"Google Play ಸೇವೆಗಳು"</string>

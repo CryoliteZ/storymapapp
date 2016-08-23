@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/StoryMap.iml" filepath="$PROJECT_DIR$/StoryMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/android-maps-utils/android-maps-utils.iml" filepath="$PROJECT_DIR$/library/android-maps-utils/android-maps-utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/storymapapp.iml" filepath="$PROJECT_DIR$/storymapapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/sweetsheet/sweetsheet.iml" filepath="$PROJECT_DIR$/library/sweetsheet/sweetsheet.iml" />
     </modules>
   </component>
 </project>

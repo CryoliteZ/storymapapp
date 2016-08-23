@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-pa/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-pa/values.xml -->
     <eat-comment/>
     <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"ਯੋਗ ਬਣਾਓ"</string>
     <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ਕੰਮ ਨਹੀਂ ਕਰੇਗਾ ਜਦੋਂ ਤੱਕ ਤੁਸੀਂ Google Play ਸੇਵਾਵਾਂ ਨੂੰ ਯੋਗ ਨਹੀਂ ਬਣਾਉਂਦੇ ਹੋ।"</string>
@@ -10,10 +10,10 @@
     <string msgid="1701766622451829291" name="common_google_play_services_install_text_tablet">"<ns1:g id="APP_NAME">%1$s</ns1:g> Google Play ਸੇਵਾਵਾਂ ਤੋਂ ਬਿਨਾਂ ਨਹੀਂ ਚੱਲੇਗਾ, ਜੋ ਤੁਹਾਡੇ ਟੈਬਲੇਟ ਤੋਂ ਲਾਪਤਾ ਹਨ।"</string>
     <string msgid="7442193194585196676" name="common_google_play_services_install_title">"Google Play ਸੇਵਾਵਾਂ ਪ੍ਰਾਪਤ ਕਰੋ"</string>
     <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Google Play ਸੇਵਾਵਾਂ ਅਸ਼ੁੱਧੀ"</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-pa/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-pa/values.xml -->
     <eat-comment/>
     <string msgid="9089562800660647919" name="common_google_play_services_unknown_issue">"<ns1:g id="APP_NAME">%1$s</ns1:g> ਨੂੰ Google Play ਸੇਵਾਵਾਂ ਨਾਲ ਸਮੱਸਿਆ ਹੋ ਰਹੀ ਹੈ। ਜੇਕਰ ਸਮੱਸਿਆ ਬਣੀ ਰਹਿੰਦੀ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਸਹਾਇਤਾ ਲਈ ਡਿਵੈਲਪਰ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।"</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-pa/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-pa/values.xml -->
     <eat-comment/>
     <string msgid="1064791666906610763" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> Google Play ਸੇਵਾਵਾਂ \'ਤੇ ਭਰੋਸਾ ਕਰਦੀ ਹੈ, ਜੋ ਤੁਹਾਡੀ ਡੀਵਾਈਸ ਵੱਲੋਂ ਸਮਰੱਥ ਨਹੀਂ ਹੈ। ਸਹਾਇਤਾ ਲਈ ਨਿਰਮਾਤਾ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।"</string>
     <string msgid="539866123733096737" name="common_google_play_services_unsupported_title">"Google Play ਸੇਵਾਵਾਂ"</string>

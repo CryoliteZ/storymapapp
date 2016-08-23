@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-zh-rCN/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-zh-rCN/values.xml -->
     <eat-comment/>
     <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"启用"</string>
     <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"您必须先启用 Google Play 服务，然后才能运行<ns1:g id="APP_NAME">%1$s</ns1:g>。"</string>
@@ -10,10 +10,10 @@
     <string msgid="1701766622451829291" name="common_google_play_services_install_text_tablet">"您的平板电脑没有安装 Google Play 服务，因此无法运行<ns1:g id="APP_NAME">%1$s</ns1:g>。"</string>
     <string msgid="7442193194585196676" name="common_google_play_services_install_title">"获取 Google Play 服务"</string>
     <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Google Play服务出错"</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-zh-rCN/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.4.0/res/values-zh-rCN/values.xml -->
     <eat-comment/>
     <string msgid="9089562800660647919" name="common_google_play_services_unknown_issue">"<ns1:g id="APP_NAME">%1$s</ns1:g>无法访问 Google Play 服务。如果问题一直存在，请与开发者联系以寻求帮助。"</string>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-zh-rCN/values.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/res/values-zh-rCN/values.xml -->
     <eat-comment/>
     <string msgid="1064791666906610763" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g>必须搭配使用 Google Play 服务才能运行，但您的设备不支持该服务。请与设备制造商联系以寻求帮助。"</string>
     <string msgid="539866123733096737" name="common_google_play_services_unsupported_title">"Google Play服务"</string>

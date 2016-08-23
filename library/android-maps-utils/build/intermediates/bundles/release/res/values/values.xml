@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/res/values/ids.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/res/values/ids.xml -->
     <eat-comment/>
     <item name="amu_text" type="id"/>
-    <!-- From: file:/C:/Users/user/Documents/GitHub/StoryMap/library/res/values/styles.xml -->
+    <!-- From: file:/C:/Users/user/Documents/GitBucket/storymapapp/library/android-maps-utils/res/values/styles.xml -->
     <eat-comment/>
     <style name="amu_Bubble.TextAppearance.Dark" parent="android:TextAppearance.Medium">
         <item name="android:textSize">14sp</item>
