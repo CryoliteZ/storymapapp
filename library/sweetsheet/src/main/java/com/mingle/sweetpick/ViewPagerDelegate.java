@@ -27,13 +27,15 @@ public class ViewPagerDelegate extends Delegate {
     private ArrayList<MenuListViewHandler> mMenuListViewHandlers;
     private IndicatorView mIndicatorView;
     private ViewPager mViewPager;
+    private ViewpagerAdapter mViewpagerAdapter;
     private SweetView mSweetView;
     private MenuListViewHandler mMenuListViewHandler;
     private FreeGrowUpParentRelativeLayout mFreeGrowUpParentRelativeLayout;
     private SweetSheet.OnMenuItemClickListener mOnMenuItemClickListener;
     private  List<MenuEntity> mMenuEntities;
 
-    private int mNumColumns=3;
+    private int mNumColumns = 3;
+    private int mNumRows = 1000;
     private int mContentViewHeight;
 
     public ViewPagerDelegate() {
@@ -44,6 +46,10 @@ public class ViewPagerDelegate extends Delegate {
     public ViewPagerDelegate(int numColumns  ,int contentViewHeight) {
         mNumColumns=numColumns;
         mContentViewHeight=contentViewHeight;
+    }
+
+    public void notifyDataSetChanged() {
+        mViewpagerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -87,19 +93,21 @@ public class ViewPagerDelegate extends Delegate {
 
         mMenuEntities=menuEntities;
         mMenuListViewHandlers = new ArrayList<>();
-        int fragmentCount = menuEntities.size() / (mNumColumns*2);
-        if (menuEntities.size() % (mNumColumns*2) != 0) {
+        int fragmentCount = menuEntities.size() / (mNumColumns*mNumRows);
+        if (menuEntities.size() % (mNumColumns*mNumRows) != 0) {
             fragmentCount += 1;
         }
         for (int i = 0; i < fragmentCount; i++) {
 
-            int lastIndex = Math.min((i + 1) * (mNumColumns*2), menuEntities.size());
+            int lastIndex = Math.min((i + 1) * (mNumColumns*mNumRows), menuEntities.size());
             MenuListViewHandler menuListViewHandler = MenuListViewHandler.getInstant
-                    (i,mNumColumns, menuEntities.subList(i*(mNumColumns*2),lastIndex));
+                    (i,mNumColumns, menuEntities.subList(i*(mNumColumns*mNumRows),lastIndex));
             menuListViewHandler.setOnMenuItemClickListener(new OnFragmentInteractionListenerImp());
             mMenuListViewHandlers.add(menuListViewHandler);
         }
-        mViewPager.setAdapter(new ViewpagerAdapter(mMenuListViewHandlers));
+        mViewpagerAdapter = new ViewpagerAdapter(mMenuListViewHandlers);
+
+        mViewPager.setAdapter(mViewpagerAdapter);
         mIndicatorView.setViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 

@@ -3,6 +3,7 @@ package com.itri.storymap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,6 +27,10 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.itri.storymap.model.Program;
+import com.mingle.entity.MenuEntity;
+import com.mingle.sweetpick.DimEffect;
+import com.mingle.sweetpick.SweetSheet;
+import com.mingle.sweetpick.ViewPagerDelegate;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -44,23 +50,26 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     public Drawable mDrawable;
     public MapDataManager mMapDataManager = new MapDataManager();
     public MapManager mMapManager;
+    private SweetSheet mSweetSheet;
+    private FrameLayout fl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FloatingActionButton homeBtn = (FloatingActionButton)findViewById(R.id.homeBtn);
-        homeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMapManager.initMapFocus(mMapDataManager.programs);
-            }
-        });
+        fl = (FrameLayout)findViewById(R.id.fl);
+        setupViewpager();
+        initFilterButtonListener();
+        initHomeButtonListener();
+
+
+
+
     }
 
     /**
-     * Draws profile photos inside markers (using IconGenerator).
-     * When there are multiple people in the cluster, draw multiple photos (using MultiDrawable).
+     * Draws program photos inside markers (using IconGenerator).
+     * When there are multiple programs in the cluster, draw multiple photos (using MultiDrawable).
      */
 
     private class ProgramRenderer extends DefaultClusterRenderer<Program> {
@@ -69,7 +78,6 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         private final ImageView mImageView;
         private final ImageView mClusterImageView;
         private final int mDimension;
-
 
 
         public ProgramRenderer() {
@@ -134,16 +142,15 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                 catch (Exception e){
                     e.printStackTrace();
                 }
-
-
             }
+            if(profilePhotos.size() <= 0) return;
+
             MultiDrawable multiDrawable = new MultiDrawable(profilePhotos);
             multiDrawable.setBounds(0, 0, width, height);
 
             mClusterImageView.setImageDrawable(multiDrawable);
             Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
-
 
         }
 
@@ -218,7 +225,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
     @Override
     public void onClusterInfoWindowClick(Cluster<Program> cluster) {
-        // Does nothing, but you could go to a list of the users.
+        // Does nothing, but you could go to a list of the programs.
     }
 
     @Override
@@ -238,10 +245,8 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     protected void startDemo() {
         mMapManager = new MapManager(getMap());
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(24, 121), 9.5f));
-
         mClusterManager = new ClusterManager<Program>(this, getMap());
         mClusterManager.setRenderer(new ProgramRenderer());
-
         getMap().setOnMarkerClickListener(mClusterManager);
         getMap().setOnInfoWindowClickListener(mClusterManager);
         getMap().setOnCameraIdleListener(mClusterManager);
@@ -260,6 +265,68 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             mClusterManager.addItems(ps);
         }
 
+    }
+
+    private void initFilterButtonListener(){
+        FloatingActionButton filterBtn = (FloatingActionButton)findViewById(R.id.filterBtn);
+        filterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSweetSheet.isShow()) {
+                    mSweetSheet.dismiss();
+                }
+                else
+                    mSweetSheet.toggle();
+            }
+        });
+    }
+
+    private void initHomeButtonListener(){
+        FloatingActionButton homeBtn = (FloatingActionButton)findViewById(R.id.homeBtn);
+        homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMapManager.initMapFocus(mMapDataManager.programs);
+            }
+        });
+    }
+
+    private void setupViewpager() {
+        final ArrayList<MenuEntity> list = new ArrayList<>();
+        for(int i = 0; i < 20; ++i){
+            MenuEntity menuEntity = new MenuEntity();
+            menuEntity.titleColor = 0xffb3b3b3;
+            menuEntity.title = "title " + String.valueOf(i);
+            list.add(menuEntity);
+        }
+        // attach to FrameLayout
+        mSweetSheet = new SweetSheet(fl);
+        // set list to sweetsheet
+        mSweetSheet.setMenuList(list);
+
+        // get window height
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+
+        // set the viewpager
+        mSweetSheet.setDelegate(new ViewPagerDelegate(3, (size.y)/2));
+        // set background effect (dim)
+        mSweetSheet.setBackgroundEffect(new DimEffect(0.87f));
+        // set onclickListener
+        mSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
+            @Override
+            public boolean onItemClick(int position, MenuEntity menuEntity) {
+                menuEntity.titleColor = (menuEntity.isChosen)? 0xffb3b3b3:0xff303030;
+                menuEntity.isChosen = !menuEntity.isChosen;
+                // Reset list (Bad practice, but it works)
+                mSweetSheet.setMenuList(list);
+                // Not sure if this lin of code works
+                ((ViewPagerDelegate)mSweetSheet.getDelegate()).notifyDataSetChanged();
+                // Toast.makeText(BaseDemoActivity.this, menuEntity.title + "  " + position, Toast.LENGTH_SHORT).show();
+                // If return true, sweetsheet closes, return false does not
+                return false;
+            }
+        });
     }
 
 

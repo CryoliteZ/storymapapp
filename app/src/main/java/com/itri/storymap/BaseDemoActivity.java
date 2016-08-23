@@ -18,10 +18,12 @@ package com.itri.storymap;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.mingle.sweetpick.SweetSheet;
 
 public abstract class BaseDemoActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -64,4 +66,6 @@ public abstract class BaseDemoActivity extends FragmentActivity implements OnMap
     protected GoogleMap getMap() {
         return mMap;
     }
+
+
 }

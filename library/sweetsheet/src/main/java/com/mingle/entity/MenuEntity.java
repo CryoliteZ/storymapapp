@@ -19,6 +19,6 @@ public class MenuEntity {
     public @ColorInt int titleColor;
     public CharSequence title;
     public Drawable icon;
-
+    public Boolean isChosen = false;
 
 }

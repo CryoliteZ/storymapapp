@@ -48,21 +48,16 @@ public class MapDataManager {
     }
 
     public List<Program> getProgramListItem (){
-
-//        Type collectionType = new TypeToken<Collection<Program>>(){}.getType();
-//        Collection<Program> programs = gson.fromJson(MAP_DATA, collectionType);
         try {
             JSONObject jObject = new JSONObject(MAP_DATA);
             JSONArray jArray = jObject.getJSONArray("RAW_MAP_DATA");
             for(int i = 0; i < jArray.length(); ++i){
                 JSONObject mProgram = jArray.getJSONObject(i);
-//                Program p = new Program(mProgram.getString("opID"), mProgram.getString("opTitle"),mProgram.getString("iconURL"), mProgram.getDouble("lat"),mProgram.getDouble("lon"), mProgram.getString("tagList"));
-
                 double lat = mProgram.getDouble("lat");
                 double lon = mProgram.getDouble("lon");
 
                 if(lat == 0.0 && lon == 0.0){
-                    Log.d("nonsense", Double.toString(lat) + ' ' + Double.toString(lon));
+                   continue;
                 }
 
                 GsonBuilder builder = new GsonBuilder();
