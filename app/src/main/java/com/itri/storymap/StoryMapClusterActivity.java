@@ -1,6 +1,7 @@
 package com.itri.storymap;
 
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -8,6 +9,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +31,9 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.itri.storymap.model.Program;
 import com.mingle.entity.MenuEntity;
+import com.mingle.sweetpick.BlurEffect;
 import com.mingle.sweetpick.DimEffect;
+import com.mingle.sweetpick.RecyclerViewDelegate;
 import com.mingle.sweetpick.SweetSheet;
 import com.mingle.sweetpick.ViewPagerDelegate;
 import com.squareup.picasso.Picasso;
@@ -37,7 +42,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -46,21 +54,19 @@ import java.util.Random;
  */
 public class StoryMapClusterActivity extends BaseDemoActivity implements ClusterManager.OnClusterClickListener<Program>, ClusterManager.OnClusterInfoWindowClickListener<Program>, ClusterManager.OnClusterItemClickListener<Program>, ClusterManager.OnClusterItemInfoWindowClickListener<Program> {
     private ClusterManager<Program> mClusterManager;
-    private Random mRandom = new Random(1984);
     public Drawable mDrawable;
     public MapDataManager mMapDataManager = new MapDataManager();
     public MapManager mMapManager;
-    private SweetSheet mSweetSheet;
+    private SweetSheet tagsSweetSheet,programSweetSheet;
     private FrameLayout fl;
+    private final int OCCUR_ZOOM_LEVEL = 16;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fl = (FrameLayout)findViewById(R.id.fl);
-        setupViewpager();
-        initFilterButtonListener();
-        initHomeButtonListener();
+
 
 
 
@@ -101,7 +107,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             // Draw a single person.
             // Set the info window to show their name.
 
-            mImageView.setImageResource(R.drawable.cicon);
+//            mImageView.setImageResource(R.drawable.cicon);
             Picasso.with(getApplicationContext()).load(program.iconURL).into(mImageView);
             Log.d("Picasso load finish", program.opID);
 
@@ -126,14 +132,20 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                 int rdn = rand.nextInt(4) + 1;
                 if (profilePhotos.size() == 1) break;
 
-                NetworkOperationAsync task = new NetworkOperationAsync();
+//                NetworkOperationAsync task = new NetworkOperationAsync();
+                LazyLoadBitmap bmpTask = new LazyLoadBitmap();
                 try{
-                    drawable = mMapDataManager.loadDrawable.get(p.opID);
+//                    drawable = mMapDataManager.loadDrawable.get(p.opID);
                     Log.d("isloadornot", Boolean.toString(drawable != null));
-                    if(drawable == null){
-                        drawable = task.execute(p.iconURL).get();
-                        mMapDataManager.loadDrawable.put(p.opID, drawable);
+                    Bitmap bmp = null;
+                    if(bmp == null){
+                        bmp = bmpTask.execute(p.iconURL).get();
+                       drawable = new BitmapDrawable(getResources(), bmp);
                     }
+//                    if(drawable == null){
+//                        drawable = task.execute(p.iconURL).get();
+//                        mMapDataManager.loadDrawable.put(p.opID, drawable);
+//                    }
                     drawable.setBounds(0, 0, width, height);
                     profilePhotos.add(drawable);
 
@@ -185,22 +197,18 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         }
     }
 
-    public  Drawable drawableFromUrl(String url) throws IOException {
-        Bitmap x;
-
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.connect();
-        InputStream input = connection.getInputStream();
-
-        x = BitmapFactory.decodeStream(input);
-        return new BitmapDrawable(this.getApplicationContext().getResources(), x);
-    }
 
     @Override
     public boolean onClusterClick(Cluster<Program> cluster) {
+        float curZoom = this.getMap().getCameraPosition().zoom;
+        if(curZoom > OCCUR_ZOOM_LEVEL){
+            setupRecyclerView(cluster.getItems());
+
+
+        }
         // Show a toast with some info when the cluster is clicked.
         String firstName = cluster.getItems().iterator().next().opID;
-        Toast.makeText(this, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
 
         // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
         // inside of bounds, then animate to center of the bounds.
@@ -213,9 +221,10 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         // Get the LatLngBounds
         final LatLngBounds bounds = builder.build();
 
-        // Animate camera to the bounds
+       // Animate camera to the bounds
         try {
-            getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+            getMap().animateCamera( CameraUpdateFactory.zoomTo(this.getMap().getCameraPosition().zoom + 1.5f ) );
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -254,9 +263,15 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-//
+
         addItems();
         mClusterManager.cluster();
+
+        fl = (FrameLayout)findViewById(R.id.fl);
+        setupViewpager();
+        initFilterButtonListener();
+        initHomeButtonListener();
+
     }
 
     private void addItems(){
@@ -264,7 +279,6 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             List <Program> ps = mMapDataManager.getProgramListItem();
             mClusterManager.addItems(ps);
         }
-
     }
 
     private void initFilterButtonListener(){
@@ -272,11 +286,11 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         filterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSweetSheet.isShow()) {
-                    mSweetSheet.dismiss();
-                }
-                else
-                    mSweetSheet.toggle();
+            if (tagsSweetSheet.isShow()) {
+                tagsSweetSheet.dismiss();
+            }
+            else
+                tagsSweetSheet.toggle();
             }
         });
     }
@@ -285,49 +299,183 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         FloatingActionButton homeBtn = (FloatingActionButton)findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                mMapManager.initMapFocus(mMapDataManager.programs);
+            public void onClick(View v) {mMapManager.initMapFocus(mMapDataManager.programs);
             }
         });
     }
 
     private void setupViewpager() {
         final ArrayList<MenuEntity> list = new ArrayList<>();
-        for(int i = 0; i < 20; ++i){
+        for(String str: mMapDataManager.tagList){
+
             MenuEntity menuEntity = new MenuEntity();
             menuEntity.titleColor = 0xffb3b3b3;
-            menuEntity.title = "title " + String.valueOf(i);
+            menuEntity.title = str;
             list.add(menuEntity);
         }
         // attach to FrameLayout
-        mSweetSheet = new SweetSheet(fl);
+        tagsSweetSheet = new SweetSheet(fl);
         // set list to sweetsheet
-        mSweetSheet.setMenuList(list);
+        tagsSweetSheet.setMenuList(list);
 
         // get window height
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
 
+        int contentHeight;
+        if(mMapDataManager.tagList.size() <= 12) contentHeight = (size.y)/3;
+        else if(mMapDataManager.tagList.size() <= 21) contentHeight = (size.y)/2;
+        else contentHeight = (size.y)*3/5;
         // set the viewpager
-        mSweetSheet.setDelegate(new ViewPagerDelegate(3, (size.y)/2));
+        tagsSweetSheet.setDelegate(new ViewPagerDelegate(3, contentHeight));
         // set background effect (dim)
-        mSweetSheet.setBackgroundEffect(new DimEffect(0.87f));
+        tagsSweetSheet.setBackgroundEffect(new DimEffect(0.87f));
         // set onclickListener
-        mSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
+        tagsSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
             @Override
             public boolean onItemClick(int position, MenuEntity menuEntity) {
-                menuEntity.titleColor = (menuEntity.isChosen)? 0xffb3b3b3:0xff303030;
+                menuEntity.titleColor = (menuEntity.isChosen) ? 0xffb3b3b3 : 0xff303030;
                 menuEntity.isChosen = !menuEntity.isChosen;
                 // Reset list (Bad practice, but it works)
-                mSweetSheet.setMenuList(list);
+                tagsSweetSheet.setMenuList(list);
                 // Not sure if this lin of code works
-                ((ViewPagerDelegate)mSweetSheet.getDelegate()).notifyDataSetChanged();
+                ((ViewPagerDelegate) tagsSweetSheet.getDelegate()).notifyDataSetChanged();
                 // Toast.makeText(BaseDemoActivity.this, menuEntity.title + "  " + position, Toast.LENGTH_SHORT).show();
                 // If return true, sweetsheet closes, return false does not
                 return false;
             }
         });
     }
+
+    private void setupRecyclerView(final Collection<Program> dataI) {
+        class LazyVideoListImageLoader implements Runnable{
+            ArrayList<MenuEntity> list;
+            public LazyVideoListImageLoader (ArrayList<MenuEntity> list){
+                this.list = list;
+            }
+
+            public void run() {
+                List<Program> dataIn = new ArrayList(dataI);
+                for(MenuEntity me : list){
+                    if(!programSweetSheet.isShow()) return;
+                    int tryAgain = 4;
+                    Bitmap bmp = null;
+
+//                    Drawable cuteDrawable = mMapDataManager.loadDrawable.get(p.opID);
+                    if(bmp == null) {
+                        Log.d("nonsense","go"+me.iconURL);
+                        while(tryAgain > 0 && bmp == null) {
+                            try {
+                                LazyLoadBitmap task = new LazyLoadBitmap();
+                                bmp = task.execute(me.iconURL).get();
+                            } catch (Exception e) {
+                                Log.d("nonsense","failed"+ String.valueOf(tryAgain));
+                                e.printStackTrace();
+                            }
+                            tryAgain--;
+                        }
+                    }
+                    if(bmp!=null) {
+                        Log.d("nonsense", "string");
+                        me.iconBitmap = bmp;
+//
+                    }
+                }
+            }
+        }
+        Bitmap defaultIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cicon);
+        Drawable defaultIconDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.cicon);
+        final ArrayList<MenuEntity> list = new ArrayList<>();
+        for(Program p:dataI) {
+            MenuEntity menuEntity = new MenuEntity();
+            menuEntity.title = p.opTitle;
+            menuEntity.titleColor = 0xff000000;
+            menuEntity.iconDrawable = defaultIconDrawable;
+            menuEntity.iconBitmap =defaultIconBitmap;
+            menuEntity.iconURL = p.iconURL;
+            menuEntity.opID = p.opID;
+            list.add(menuEntity);
+        }
+
+
+
+        programSweetSheet = new SweetSheet(fl);
+        programSweetSheet.setMenuList(list);
+        programSweetSheet.setDelegate(new RecyclerViewDelegate(true));
+        programSweetSheet.setBackgroundEffect(new BlurEffect(8));
+        programSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
+            @Override
+            public boolean onItemClick(int position, MenuEntity menuEntity1) {
+                list.get(position).titleColor = 0xff5823ff;
+                ((RecyclerViewDelegate) programSweetSheet.getDelegate()).notifyDataSetChanged();
+//                Toast.makeText(StoryMapClusterActivity.this, menuEntity1.title + "  " + position, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        if (programSweetSheet.isShow()) {
+            programSweetSheet.dismiss();
+        }
+        else programSweetSheet.toggle();
+        new Thread((new LazyVideoListImageLoader(list))).start();
+
+//        (new LoadImage()).execute(list);
+
+
+
+    }
+
+    // pollution
+    @Deprecated
+    private class LoadImage extends AsyncTask<List<MenuEntity>, String, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        protected Boolean doInBackground(List<MenuEntity>... args) {
+            for(MenuEntity me : args[0]) {
+                try {
+                    Log.d("nonsense", me.iconURL);
+                    String url = me.iconURL;
+                    URLConnection conn = new URL(url).openConnection();
+                    conn.connect();
+                    me.iconBitmap = BitmapFactory.decodeStream(conn.getInputStream());
+//                    ((RecyclerViewDelegate) programSweetSheet.getDelegate()).notifyDataSetChanged();
+                    Log.d("nonsense", "good");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("nonsense", "bAd");
+                }
+
+            }
+            return true;
+        }
+        protected void onPostExecute(Boolean flag) {
+
+        }
+    }
+
+    private class LazyLoadBitmap extends AsyncTask<String, String, Bitmap> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        protected Bitmap doInBackground(String... args) {
+            Bitmap bitmap = null;
+            try {
+                URLConnection conn = new URL(args[0]).openConnection();
+                conn.connect();
+                return BitmapFactory.decodeStream( conn.getInputStream() );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+        protected void onPostExecute(Bitmap image) {
+
+        }
+    }
+
+
 
 
 

@@ -57,13 +57,16 @@ public class MenuRVAdapter extends RecyclerView.Adapter<MenuRVAdapter.MenuVH> {
         menuVH.itemRl.setOnClickListener(mSingleClickListener);
         menuVH.itemRl.setTag(menuVH.getAdapterPosition());
         MenuEntity menuEntity = mDataList.get(i);
-        if (menuEntity.iconId != 0) {
+        if (menuEntity.iconDrawable != null) {
 
             menuVH.iv.setVisibility(View.VISIBLE);
-            menuVH.iv.setImageResource(menuEntity.iconId);
+            menuVH.iv.setImageBitmap(menuEntity.iconBitmap);
+//            menuVH.iv.setImageDrawable(menuEntity.iconDrawable);
+//            menuVH.iv.setImageResource(menuEntity.iconId);
         } else if (menuEntity.icon != null) {
 
             menuVH.iv.setVisibility(View.VISIBLE);
+//            menuVH.iv.setImageDrawable(menuEntity.iconDrawable);
             menuVH.iv.setImageDrawable(menuEntity.icon);
 
         } else {

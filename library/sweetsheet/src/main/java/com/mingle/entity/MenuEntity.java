@@ -1,5 +1,6 @@
 package com.mingle.entity;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -20,5 +21,10 @@ public class MenuEntity {
     public CharSequence title;
     public Drawable icon;
     public Boolean isChosen = false;
+    // manualy added drawable
+    public Drawable iconDrawable = null;
+    public String opID;
+    public String iconURL;
+    public Bitmap iconBitmap;
 
 }

@@ -2,6 +2,7 @@ package com.itri.storymap;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -28,6 +29,8 @@ public class MapDataManager {
     public String MAP_DATA;
     public List<Program> programs = new ArrayList<Program>();
     public Map<String, Drawable> loadDrawable = new HashMap<String, Drawable>();
+    public Map<String, Bitmap> bitmapDict = new HashMap<String, Bitmap>();
+    public List<String> tagList = new ArrayList<String>();
 
     public boolean initLoadJSONFromAsset(Context myContext) {
         String json;
@@ -63,29 +66,28 @@ public class MapDataManager {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
 
+                Program p = gson.fromJson(mProgram.toString(), Program.class);
                 // Convert from JSON to Program Object
-                programs.add(gson.fromJson(mProgram.toString(), Program.class));
+                programs.add(p);
                 // Convert into LagLng form
                 programs.get(programs.size()-1).convertToLatLng();
                 programs.get(programs.size()-1).parseTags();
                 programs.get(programs.size()-1).setPhoto();
-
-
+                appendTagList(p);
             }
         }
         catch (JSONException e){
             Log.e("JSON exception", "Something wrong with program JSON");
         }
         return programs;
-
     }
 
-
-
-
-
-
-
-
-
+    private void appendTagList(Program p){
+        if(p.tags == null) return;
+        for(String str : p.tags){
+            if(!tagList.contains(str)){
+                tagList.add(str);
+            }
+        }
+    }
 }
