@@ -63,6 +63,10 @@ public class Program implements ClusterItem {
     public void parseTags(){
         if(tagList.length() > 0)
             this.tags = tagList.split(",");
+        else{
+            this.tags = new String[1];
+            tags[0] = "%NOTAGS%";
+        }
     }
 
     /* set profilephoto */

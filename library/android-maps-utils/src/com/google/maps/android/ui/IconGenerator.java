@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,7 @@ public class IconGenerator {
         int measuredHeight = mContainer.getMeasuredHeight();
 
         mContainer.layout(0, 0, measuredWidth, measuredHeight);
+
 
         if (mRotation == 1 || mRotation == 3) {
             measuredHeight = mContainer.getMeasuredWidth();

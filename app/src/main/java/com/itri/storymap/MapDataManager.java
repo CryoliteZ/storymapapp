@@ -31,6 +31,7 @@ public class MapDataManager {
     public Map<String, Drawable> loadDrawable = new HashMap<String, Drawable>();
     public Map<String, Bitmap> bitmapDict = new HashMap<String, Bitmap>();
     public List<String> tagList = new ArrayList<String>();
+    public List<String> filterTagList = new ArrayList<String>();
 
     public boolean initLoadJSONFromAsset(Context myContext) {
         String json;
@@ -83,11 +84,29 @@ public class MapDataManager {
     }
 
     private void appendTagList(Program p){
-        if(p.tags == null) return;
+        if(p.tags[0] == "%NOTAGS%") return;
         for(String str : p.tags){
             if(!tagList.contains(str)){
                 tagList.add(str);
+
             }
         }
     }
+
+    public void filterAddTag(String tag){
+       if(!filterTagList.contains(tag)){
+           filterTagList.add(tag);
+       }
+    }
+
+    public void filterRemoveTag(String tag){
+        if(filterTagList.contains(tag)){
+            filterTagList.remove(tag);
+        }
+    }
+
+    public void clearFilter(){
+        filterTagList.clear();
+    }
+
 }

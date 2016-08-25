@@ -1,16 +1,15 @@
 package com.itri.storymap;
 
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,12 +39,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -59,7 +58,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     public MapManager mMapManager;
     private SweetSheet tagsSweetSheet,programSweetSheet;
     private FrameLayout fl;
-    private final int OCCUR_ZOOM_LEVEL = 16;
+    private final int OCCUR_ZOOM_LEVEL = 21;
 
 
     @Override
@@ -108,8 +107,14 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             // Set the info window to show their name.
 
 //            mImageView.setImageResource(R.drawable.cicon);
-            Picasso.with(getApplicationContext()).load(program.iconURL).into(mImageView);
-            Log.d("Picasso load finish", program.opID);
+            Picasso.with(getApplicationContext())
+                    .load(program.iconURL)
+                    .resize(52, 52)
+                    .placeholder(R.drawable.cicon)
+                    .centerCrop()
+                    .into(mImageView);
+
+
 
 
 
@@ -126,30 +131,21 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             int height = mDimension;
             Drawable  drawable = null;
             for (Program p : cluster.getItems()) {
-//                 Draw 4 at most.
-               drawable = getResources().getDrawable(p.profilePhoto);
+            //   Draw 4 at most.
                 Random rand = new Random();
                 int rdn = rand.nextInt(4) + 1;
                 if (profilePhotos.size() == 1) break;
 
-//                NetworkOperationAsync task = new NetworkOperationAsync();
                 LazyLoadBitmap bmpTask = new LazyLoadBitmap();
                 try{
-//                    drawable = mMapDataManager.loadDrawable.get(p.opID);
                     Log.d("isloadornot", Boolean.toString(drawable != null));
                     Bitmap bmp = null;
                     if(bmp == null){
                         bmp = bmpTask.execute(p.iconURL).get();
                        drawable = new BitmapDrawable(getResources(), bmp);
                     }
-//                    if(drawable == null){
-//                        drawable = task.execute(p.iconURL).get();
-//                        mMapDataManager.loadDrawable.put(p.opID, drawable);
-//                    }
                     drawable.setBounds(0, 0, width, height);
                     profilePhotos.add(drawable);
-
-
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -165,9 +161,6 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
 
         }
-
-
-
 
         @Override
         protected boolean shouldRenderAsCluster(Cluster cluster) {
@@ -201,14 +194,14 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     @Override
     public boolean onClusterClick(Cluster<Program> cluster) {
         float curZoom = this.getMap().getCameraPosition().zoom;
-        if(curZoom > OCCUR_ZOOM_LEVEL){
+        if(curZoom >= OCCUR_ZOOM_LEVEL){
             setupRecyclerView(cluster.getItems());
 
 
         }
         // Show a toast with some info when the cluster is clicked.
-        String firstName = cluster.getItems().iterator().next().opID;
-//        Toast.makeText(this, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
+        // String firstName = cluster.getItems().iterator().next().opID;
+        // Toast.makeText(this, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
 
         // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
         // inside of bounds, then animate to center of the bounds.
@@ -223,7 +216,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
        // Animate camera to the bounds
         try {
-            getMap().animateCamera( CameraUpdateFactory.zoomTo(this.getMap().getCameraPosition().zoom + 1.5f ) );
+            getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -268,7 +261,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         mClusterManager.cluster();
 
         fl = (FrameLayout)findViewById(R.id.fl);
-        setupViewpager();
+        setupTagViewpager();
         initFilterButtonListener();
         initHomeButtonListener();
 
@@ -304,10 +297,18 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         });
     }
 
-    private void setupViewpager() {
+    private void setupTagViewpager() {
         final ArrayList<MenuEntity> list = new ArrayList<>();
-        for(String str: mMapDataManager.tagList){
+        MenuEntity blankEntity = new MenuEntity();
+        blankEntity.title = "";
+        MenuEntity eraseEntity = new MenuEntity();
+        eraseEntity.title = "[CLEAR]";
 
+
+        eraseEntity.titleColor = 0xffCB1B45;
+        list.add(blankEntity); list.add(eraseEntity); list.add(blankEntity);
+
+        for(String str: mMapDataManager.tagList){
             MenuEntity menuEntity = new MenuEntity();
             menuEntity.titleColor = 0xffb3b3b3;
             menuEntity.title = str;
@@ -323,9 +324,9 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         getWindowManager().getDefaultDisplay().getSize(size);
 
         int contentHeight;
-        if(mMapDataManager.tagList.size() <= 12) contentHeight = (size.y)/3;
-        else if(mMapDataManager.tagList.size() <= 21) contentHeight = (size.y)/2;
-        else contentHeight = (size.y)*3/5;
+        if(mMapDataManager.tagList.size() <= 12) contentHeight = (size.y)/2;
+        else if(mMapDataManager.tagList.size() <= 21) contentHeight = (int)(Math.floor(size.y)*0.6);
+        else contentHeight = (int)(Math.floor(size.y)*0.7);
         // set the viewpager
         tagsSweetSheet.setDelegate(new ViewPagerDelegate(3, contentHeight));
         // set background effect (dim)
@@ -334,13 +335,40 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         tagsSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
             @Override
             public boolean onItemClick(int position, MenuEntity menuEntity) {
-                menuEntity.titleColor = (menuEntity.isChosen) ? 0xffb3b3b3 : 0xff303030;
-                menuEntity.isChosen = !menuEntity.isChosen;
-                // Reset list (Bad practice, but it works)
-                tagsSweetSheet.setMenuList(list);
-                // Not sure if this lin of code works
-                ((ViewPagerDelegate) tagsSweetSheet.getDelegate()).notifyDataSetChanged();
-                // Toast.makeText(BaseDemoActivity.this, menuEntity.title + "  " + position, Toast.LENGTH_SHORT).show();
+                // Empty entity
+                if(position == 0 || position == 2) return false;
+                else if(position == 1){
+                    if(mMapDataManager.filterTagList.size() == 0) return false;
+                    // Clear filter
+                    mMapDataManager.clearFilter();
+
+                    // Update UI
+                    for(MenuEntity me: list){
+                        if(me.isChosen){
+                            me.titleColor = 0xffb3b3b3;
+                        }
+                    }
+                    tagsSweetSheet.setMenuList(list);
+                }
+                else {
+                    // Update view UI
+                    menuEntity.titleColor = (menuEntity.isChosen) ? 0xffb3b3b3 : 0xff303030;
+                    menuEntity.isChosen = !menuEntity.isChosen;
+                    // Not working method
+                    //  ((ViewPagerDelegate) tagsSweetSheet.getDelegate()).notifyDataSetChanged();
+
+                    // Reset list (Bad practice, but it works)
+                    tagsSweetSheet.setMenuList(list);
+
+                    // Add/Remove tag to filter
+                    if(menuEntity.isChosen)
+                        mMapDataManager.filterAddTag(menuEntity.title);
+                    else
+                        mMapDataManager.filterRemoveTag(menuEntity.title);
+                }
+                // Reset map according to the filter
+                mMapManager.setMapWithFilter(mMapDataManager.programs, mMapDataManager.filterTagList, mClusterManager);
+
                 // If return true, sweetsheet closes, return false does not
                 return false;
             }
@@ -358,7 +386,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                 List<Program> dataIn = new ArrayList(dataI);
                 for(MenuEntity me : list){
                     if(!programSweetSheet.isShow()) return;
-                    int tryAgain = 4;
+                    int tryAgain = 3;
                     Bitmap bmp = null;
 
 //                    Drawable cuteDrawable = mMapDataManager.loadDrawable.get(p.opID);
@@ -378,7 +406,6 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                     if(bmp!=null) {
                         Log.d("nonsense", "string");
                         me.iconBitmap = bmp;
-//
                     }
                 }
             }
@@ -391,7 +418,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             menuEntity.title = p.opTitle;
             menuEntity.titleColor = 0xff000000;
             menuEntity.iconDrawable = defaultIconDrawable;
-            menuEntity.iconBitmap =defaultIconBitmap;
+            menuEntity.iconBitmap = defaultIconBitmap;
             menuEntity.iconURL = p.iconURL;
             menuEntity.opID = p.opID;
             list.add(menuEntity);
@@ -402,7 +429,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         programSweetSheet = new SweetSheet(fl);
         programSweetSheet.setMenuList(list);
         programSweetSheet.setDelegate(new RecyclerViewDelegate(true));
-        programSweetSheet.setBackgroundEffect(new BlurEffect(8));
+        programSweetSheet.setBackgroundEffect(new DimEffect(0.77f));
         programSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
             @Override
             public boolean onItemClick(int position, MenuEntity menuEntity1) {
@@ -424,7 +451,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
     }
 
-    // pollution
+    // POLLUTION
     @Deprecated
     private class LoadImage extends AsyncTask<List<MenuEntity>, String, Boolean> {
         @Override
@@ -462,9 +489,19 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         protected Bitmap doInBackground(String... args) {
             Bitmap bitmap = null;
             try {
-                URLConnection conn = new URL(args[0]).openConnection();
-                conn.connect();
-                return BitmapFactory.decodeStream( conn.getInputStream() );
+                URLConnection connection = new URL(args[0]).openConnection();
+                connection.setUseCaches(true);
+                Object response = connection.getContent();
+                if(response instanceof Bitmap) {
+                    bitmap = (Bitmap) response;
+                    Log.d("cache", "good!");
+                }
+                else {
+                    Log.d("cache", "no good!");
+                    bitmap = BitmapFactory.decodeStream(connection.getInputStream());
+                    bitmap = compressBitmap(bitmap);
+                }
+                return bitmap;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -475,8 +512,18 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         }
     }
 
-
-
+    public Bitmap compressBitmap(Bitmap bmp){
+        int width = bmp.getWidth();
+        int height = bmp.getHeight();
+        float ratioWH = height / width;
+        float scaleWidth = ((float) 52) / width;
+        float scaleHeight = ((float) 52 * ratioWH) / height;
+        // create matrix for manipulation
+        Matrix matrix = new Matrix();
+        // resize the bitmap scale
+        matrix.postScale(scaleWidth, scaleHeight);
+        return Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, false);
+    }
 
 
 }

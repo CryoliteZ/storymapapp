@@ -18,7 +18,7 @@ public class MenuEntity {
 
     public @DrawableRes int iconId;
     public @ColorInt int titleColor;
-    public CharSequence title;
+    public String title;
     public Drawable icon;
     public Boolean isChosen = false;
     // manualy added drawable
