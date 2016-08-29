@@ -4,8 +4,11 @@ import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.geometry.Bounds;
 import com.itri.storymap.model.Program;
 
 import java.util.Arrays;
@@ -32,7 +35,7 @@ public class MapManager{
 
         // Animate camera to the bounds
         try {
-            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
         } catch (Exception e) {
             e.printStackTrace();
             return  false;
@@ -60,5 +63,17 @@ public class MapManager{
         return true;
     }
 
+    public LatLng findCenterLatLng(List<Program> ps){
+        int maxPopularity = -1;
+        LatLng center = new LatLng(0,0);
+        for (Program p : ps) {
+           if(p.getPopularity() > maxPopularity) {
+               maxPopularity = p.getPopularity();
+               center = p.getPosition();
+           }
+        }
+       return center;
+
+    }
 
 }

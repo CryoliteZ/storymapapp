@@ -28,8 +28,8 @@ public class Program implements ClusterItem {
     private int duration;
     private int popularity;
     private int createDate;
-    private double lat;
-    private double lon;
+    public double lat;
+    public double lon;
     public String iconURL;
     private int photoCount;
     private String tagList;
@@ -73,6 +73,8 @@ public class Program implements ClusterItem {
     public void setPhoto(){
         profilePhoto = R.drawable.ic_launcher;
     }
+
+    public int getPopularity(){ return popularity;}
 
     @Override
     public LatLng getPosition() {
