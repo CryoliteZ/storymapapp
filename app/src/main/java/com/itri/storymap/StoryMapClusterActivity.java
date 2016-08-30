@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -109,22 +110,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
             Bitmap bmp = bitmapLoader(program.opID, program.iconURL, 3, 500, loadDefaultIconBitmap());
             if(bmp == null) bmp =  loadDefaultIconBitmap();
-//            class PostSetView {
-//                private Bitmap bmp;
-//                PostSetView(Bitmap bmp){
-//                    this.bmp = bmp;
-//                }
-//                public void setView(){
-//                    mImageView.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mImageView.setImageBitmap(bmp);
-//                        }
-//                    });
-//                }
-//            }
-//            PostSetView psv = new PostSetView(bmp);
-//            psv.setView();
+
 
             mImageView.setImageBitmap(bmp);
 //            mImageView.setAdjustViewBounds(true);
@@ -142,7 +128,11 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
         @Override
         protected void onBeforeClusterRendered(Cluster<Program> cluster, MarkerOptions markerOptions) {
-            // Draw multiple people.
+            LatLngBounds bounds = getMap().getProjection().getVisibleRegion().latLngBounds;
+            Boolean inScreen = false;
+
+
+            // Draw multiple program.
             // Note: this method runs on the UI thread. Don't spend too much time in here (like in this example).
             List<Drawable> profilePhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
             int width = mDimension;
@@ -153,6 +143,10 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             Log.d("length cluster", String.valueOf(cluster.getItems().size()));
             int tryGetCounter = 0;
             for (Program p : cluster.getItems()) {
+                if(!bounds.contains(p.getPosition())) {
+                    Log.d("Not in screen", p.opTitle);
+                    return;
+                }
                 Log.d("try get conter", p.opTitle + String.valueOf(tryGetCounter));
                 tryGetCounter++;
                 if(tryGetCounter > TRY_GET_COUNT_MAX){
@@ -171,10 +165,10 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             Log.d("size", String.valueOf(profilePhotos.size()));
             Drawable defaultIconDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.cicon);
             if(profilePhotos.size() == 0) profilePhotos.add(defaultIconDrawable);
-//            if(bmp == null) {bmp = loadDefaultIconBitmap();
-//            drawable = new BitmapDrawable(getResources(), bmp);
-//            drawable.setBounds(0, 0, width, height);
-//            profilePhotos.add(drawable);}
+            if(bmp == null) {bmp = loadDefaultIconBitmap();
+            drawable = new BitmapDrawable(getResources(), bmp);
+            drawable.setBounds(0, 0, width, height);
+            profilePhotos.add(drawable);}
 
 
 //            if(drawable == null) return;
@@ -191,7 +185,12 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 //                        .centerCrop()
 //                        .into(mClusterImageView);
 
+            // // //
             mClusterImageView.setImageDrawable(multiDrawable);
+
+
+
+
             Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
 
