@@ -7,6 +7,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.geometry.Bounds;
 import com.itri.storymap.model.Program;
@@ -63,7 +64,7 @@ public class MapManager{
         return true;
     }
 
-    public LatLng findCenterLatLng(List<Program> ps){
+    public LatLng findMaxPopLatLng(List<Program> ps){
         int maxPopularity = -1;
         LatLng center = new LatLng(0,0);
         for (Program p : ps) {
@@ -75,5 +76,16 @@ public class MapManager{
        return center;
 
     }
+
+    public LatLng findCenterLatLngFromCluster(Cluster<Program> ps) {
+        Double lat = 0.0, lon = 0.0;
+        for (Program p : ps.getItems()) {
+           lat += p.lat;
+           lon += p.lon;
+        }
+        return new LatLng(lat/ps.getItems().size(), lon/ps.getItems().size());
+    }
+
+
 
 }

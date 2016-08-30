@@ -13,10 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdate;
@@ -25,7 +23,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
@@ -34,25 +31,20 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.itri.storymap.model.Program;
 import com.mingle.entity.MenuEntity;
-import com.mingle.sweetpick.BlurEffect;
 import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.RecyclerViewDelegate;
 import com.mingle.sweetpick.SweetSheet;
 import com.mingle.sweetpick.ViewPagerDelegate;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +58,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     private SweetSheet tagsSweetSheet,programSweetSheet;
     private FrameLayout fl;
     private final int OCCUR_ZOOM_LEVEL = 21;
-    private final int TRY_GET_COUNT_MAX = 2;
+    private final int TRY_GET_COUNT_MAX = 3;
 
 
 
@@ -115,10 +107,27 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             // Draw a single person.
             // Set the info window to show their name.
 
-            Bitmap bmp = bitmapLoader(program.opID, program.iconURL, 2, 500, loadDefaultIconBitmap());
+            Bitmap bmp = bitmapLoader(program.opID, program.iconURL, 3, 500, loadDefaultIconBitmap());
             if(bmp == null) bmp =  loadDefaultIconBitmap();
-            mImageView.setImageBitmap(bmp);
+//            class PostSetView {
+//                private Bitmap bmp;
+//                PostSetView(Bitmap bmp){
+//                    this.bmp = bmp;
+//                }
+//                public void setView(){
+//                    mImageView.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mImageView.setImageBitmap(bmp);
+//                        }
+//                    });
+//                }
+//            }
+//            PostSetView psv = new PostSetView(bmp);
+//            psv.setView();
 
+            mImageView.setImageBitmap(bmp);
+//            mImageView.setAdjustViewBounds(true);
 //            Picasso.with(getApplicationContext())
 //                    .load(program.iconURL)
 //                    .resize(52, 52)
@@ -144,8 +153,10 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             Log.d("length cluster", String.valueOf(cluster.getItems().size()));
             int tryGetCounter = 0;
             for (Program p : cluster.getItems()) {
+                Log.d("try get conter", p.opTitle + String.valueOf(tryGetCounter));
                 tryGetCounter++;
                 if(tryGetCounter > TRY_GET_COUNT_MAX){
+
                    break;
                 }
                 bmp = bitmapLoader(p.opID, p.iconURL, 1);
@@ -160,6 +171,12 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             Log.d("size", String.valueOf(profilePhotos.size()));
             Drawable defaultIconDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.cicon);
             if(profilePhotos.size() == 0) profilePhotos.add(defaultIconDrawable);
+//            if(bmp == null) {bmp = loadDefaultIconBitmap();
+//            drawable = new BitmapDrawable(getResources(), bmp);
+//            drawable.setBounds(0, 0, width, height);
+//            profilePhotos.add(drawable);}
+
+
 //            if(drawable == null) return;
             MultiDrawable multiDrawable = new MultiDrawable(profilePhotos);
             multiDrawable.setBounds(0, 0, width, height);
@@ -223,8 +240,8 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
         // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
         // inside of bounds, then animate to center of the bounds.
-
-        // Create the builder to collect all essential cluster items for the bounds.
+//
+//        // Create the builder to collect all essential cluster items for the bounds.
         LatLngBounds.Builder builder = LatLngBounds.builder();
         for (ClusterItem item : cluster.getItems()) {
             builder.include(item.getPosition());
@@ -239,6 +256,14 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        LatLng center = mMapManager.findCenterLatLngFromCluster(cluster);
+//        try{
+//            getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(center, curZoom + 2));
+//        }
+//        catch (Exception e){
+//
+//        }
+
 
         return true;
     }
@@ -280,7 +305,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         addItems();
 
-        LatLng center = mMapManager.findCenterLatLng(mMapDataManager.programs);
+        LatLng center = mMapManager.findMaxPopLatLng(mMapDataManager.programs);
         CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(center,5);
         getMap().animateCamera(cu, 2000, null);
 
@@ -527,6 +552,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                     Log.d("cache", "no good!");
                     bitmap = BitmapFactory.decodeStream(connection.getInputStream());
                 }
+//                bitmap = BitmapFactory.decodeStream(connection.getInputStream());
                 return bitmap;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -541,8 +567,8 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     public Bitmap compressBitmap(Bitmap bmp){
         int width = bmp.getWidth();
         int height = bmp.getHeight();
-        if(width == 0 || height == 0){
-            return bmp;
+        if(width <= 0.1 || height <= 0.1){
+            return loadDefaultIconBitmap();
         }
         float ratioWH = height / width;
         float scaleWidth = ((float) 25) / width;
@@ -551,7 +577,13 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         Matrix matrix = new Matrix();
         // resize the bitmap scale
         matrix.postScale(scaleWidth, scaleHeight);
-        return Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, false);
+        try{
+            return Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, false);
+        }
+        catch (Exception e){
+            return loadDefaultIconBitmap();
+        }
+
     }
 
     private void updateProgramImageDataSetChanged(){
@@ -582,7 +614,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                 try {
                     LazyLoadBitmap task = new LazyLoadBitmap();
                     bmp = task.execute(iconURL).get(timeout, TimeUnit.MILLISECONDS);
-                    bmp = compressBitmap(bmp);
+//                    bmp = compressBitmap(bmp);
 
                 } catch (Exception e) {
                     Log.d("nonsense", "failed" + String.valueOf(tryAgain));
@@ -593,9 +625,12 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
 
         }
         if(bmp!=null) {
-            Log.d("nonsense", "string");
-            mMapDataManager.bitmapDict.put(opID, bmp);
-            return bmp;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 10, baos);
+            Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()));
+            Log.d("nonsense", "string"+decoded.getWidth());
+            mMapDataManager.bitmapDict.put(opID, decoded);
+            return decoded;
         }
         else
             return null;
