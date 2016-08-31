@@ -162,7 +162,6 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
                     Picasso.with(getApplicationContext())
                             .load(program.iconURL) // Start loading the current target
                             .resize(100, 100)
-
                             .into(target);
 
 
@@ -393,7 +392,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         addItems();
 
         LatLng center = mMapManager.findMaxPopLatLng(mMapDataManager.programs);
-        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(center,5);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(center,14);
         getMap().animateCamera(cu, 2000, null);
 
         mClusterManager.cluster();
