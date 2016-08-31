@@ -28,11 +28,13 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.media.tv.TvContract;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -79,6 +81,12 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements ClusterRen
     private final IconGenerator mIconGenerator;
     private final ClusterManager<T> mClusterManager;
     private final float mDensity;
+
+
+    public DefaultClusterRenderer<T> me(){
+        return this;
+    }
+    public boolean canGo = true;
 
     private static final int[] BUCKETS = {10, 20, 50, 100, 200, 500, 1000};
     private ShapeDrawable mColoredCircleBackground;
@@ -828,6 +836,8 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements ClusterRen
                             markerOptions.position(item.getPosition());
                         }
                         onBeforeClusterItemRendered(item, markerOptions);
+//                        while(!canGo);
+//                        Log.i("target", String.valueOf(canGo));
                         marker = mClusterManager.getMarkerCollection().addMarker(markerOptions);
                         markerWithPosition = new MarkerWithPosition(marker);
                         mMarkerCache.put(item, marker);

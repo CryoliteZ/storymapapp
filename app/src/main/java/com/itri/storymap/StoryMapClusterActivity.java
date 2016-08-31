@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,6 +37,9 @@ import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.RecyclerViewDelegate;
 import com.mingle.sweetpick.SweetSheet;
 import com.mingle.sweetpick.ViewPagerDelegate;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +64,8 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
     private FrameLayout fl;
     private final int OCCUR_ZOOM_LEVEL = 21;
     private final int TRY_GET_COUNT_MAX = 3;
+    final List<Target> targets = new ArrayList<Target>();
+    CameraPosition mPreviousCameraPosition = null;
 
 
 
@@ -104,26 +110,80 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(Program program, MarkerOptions markerOptions) {
+        protected void onBeforeClusterItemRendered(Program program, MarkerOptions markerOptions
+        ) {
             // Draw a single person.
             // Set the info window to show their name.
-
-            Bitmap bmp = bitmapLoader(program.opID, program.iconURL, 3, 500, loadDefaultIconBitmap());
-            if(bmp == null) bmp =  loadDefaultIconBitmap();
-
-
-            mImageView.setImageBitmap(bmp);
+//
+//            Bitmap bmp = bitmapLoader(program.opID, program.iconURL, 1, 500, loadDefaultIconBitmap());
+//            if(bmp == null) bmp =  loadDefaultIconBitmap();
+//
+//
+//            mImageView.setImageBitmap(bmp);
 //            mImageView.setAdjustViewBounds(true);
-//            Picasso.with(getApplicationContext())
-//                    .load(program.iconURL)
-//                    .resize(52, 52)
-//                    .placeholder(R.drawable.cicon)
-//                    .centerCrop()
-//                    .into(mImageView);
+
+            class AlibabaClass{
+                Program program;
+                MarkerOptions markerOptions;
+                DefaultClusterRenderer<Program> dc;
+                public AlibabaClass(Program program, MarkerOptions markerOptions, DefaultClusterRenderer<Program> dc){
+                    this.program = program;
+                    this.markerOptions = markerOptions;
+                    this.dc = dc;
+                }
+                public void doIt(){
+
+                    Target target = new Target() {
+
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Log.i("Targets", "Loaded: " + program.opTitle) ;
+                            mImageView.setImageBitmap(bitmap);
+                            Bitmap icon = mIconGenerator.makeIcon();
+                            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(program.opTitle);
+                            mIconGenerator.setContentView(mImageView);
+                            targets.remove(this);
+                            dc.canGo = true;
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.i("Targets", "fail: " );
+                            targets.remove(this);
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            Log.i("Targets", "Preparing: " +program.opTitle);
+                        }
+                    };
+
+                    targets.add(target);
+                    Picasso.with(getApplicationContext())
+                            .load(program.iconURL) // Start loading the current target
+                            .resize(100, 100)
+
+                            .into(target);
 
 
-            Bitmap icon = mIconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(program.opTitle);
+                    mImageView.setTag(target);
+                    Bitmap icon = mIconGenerator.makeIcon();
+                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(program.opTitle);
+                    mIconGenerator.setContentView(mImageView);
+                }
+
+            }
+            super.canGo = false;
+            AlibabaClass mAlibabaClass = new AlibabaClass(program, markerOptions, super.me());
+            mAlibabaClass.doIt();// !
+
+
+
+
+
+
+//            Bitmap icon = mIconGenerator.makeIcon();
+//            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(program.opTitle);
         }
 
         @Override
@@ -164,7 +224,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             }
             Log.d("size", String.valueOf(profilePhotos.size()));
             Drawable defaultIconDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.cicon);
-            if(profilePhotos.size() == 0) profilePhotos.add(defaultIconDrawable);
+            if(profilePhotos.size() == 0)  profilePhotos.add(defaultIconDrawable);
             if(bmp == null) {bmp = loadDefaultIconBitmap();
             drawable = new BitmapDrawable(getResources(), bmp);
             drawable.setBounds(0, 0, width, height);
@@ -299,6 +359,33 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         getMap().setOnMarkerClickListener(mClusterManager);
         getMap().setOnInfoWindowClickListener(mClusterManager);
         getMap().setOnCameraIdleListener(mClusterManager);
+
+//        getMap().setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+//            @Override
+//            public void onCameraMoveStarted(int i) {
+//                LatLngBounds bounds = getMap().getProjection().getVisibleRegion().latLngBounds;
+//                addItemsInScreen(bounds);
+//                if (!bounds.contains(new LatLng(24.786313287937, 121.01170004357))) {
+//                    Log.d("Not in screen", "scarf");
+////                    return;
+//                }
+//
+//                Log.d("camera", "hiiiStart");
+//            }
+//        });
+
+//        getMap().setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+//            @Override
+//            public void onCameraIdle() {
+//                CameraPosition position = getMap().getCameraPosition();
+//                if (mPreviousCameraPosition == null || mPreviousCameraPosition.zoom != position.zoom) {
+//                    mPreviousCameraPosition = getMap().getCameraPosition();
+//                    mClusterManager.cluster();
+//                }
+//            }
+//        });
+
+
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
@@ -338,6 +425,25 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             List <Program> ps = mMapDataManager.getProgramListItem();
             mClusterManager.addItems(ps);
         }
+    }
+
+    private void addItemsInScreen(LatLngBounds bounds){
+        if(this.getMap().getCameraPosition().zoom < 14) return;
+        getMap().clear();
+        mClusterManager.clearItems(); // calling for sure - maybe it doenst need to be here
+//        if(mMapDataManager.getProgramListItem().size() == 0){
+//            mMapDataManager.initLoadJSONFromAsset(this.getApplicationContext());
+//        }
+        List<Program> ps  = mMapDataManager.programs;
+
+
+        for(Program p: ps){
+            if(bounds.contains(p.getPosition())){
+                mClusterManager.addItem(p);
+            }
+        }
+        mClusterManager.cluster();
+
     }
 
     private void initFilterButtonListener(){
@@ -615,7 +721,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             while (tryAgain > 0 && bmp == null) {
                 try {
                     LazyLoadBitmap task = new LazyLoadBitmap();
-                    bmp = task.execute(iconURL).get(timeout, TimeUnit.MILLISECONDS);
+                    bmp = task.execute(iconURL).get();
 //                    bmp = compressBitmap(bmp);
 
                 } catch (Exception e) {

@@ -24,6 +24,8 @@ import android.widget.FrameLayout;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.mingle.sweetpick.SweetSheet;
 
 public abstract class BaseDemoActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -52,35 +54,8 @@ public abstract class BaseDemoActivity extends FragmentActivity implements OnMap
             return;
         }
         mMap = map;
-        getMap().setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
-            @Override
-            public void onCameraMoveStarted(int i) {
-//                mDragTimer.start();
-//                mTimerIsRunning = true;
-                Log.d("camera", "hiiiStart");
-            }
-        });
-
-        getMap().setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
 
 
-                Log.d("camera", "hiiiIdle");
-                // Cleaning all the markers.
-//                if (mGoogleMap != null) {
-//                    mGoogleMap.clear();
-//                }
-//
-//                mPosition = mGoogleMap.getCameraPosition().target;
-//                mZoom = mGoogleMap.getCameraPosition().zoom;
-//
-//                if (mTimerIsRunning) {
-//                    mDragTimer.cancel();
-//                }
-
-            }
-        });
 
         startDemo();
 
