@@ -18,6 +18,7 @@ package com.itri.storymap;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -51,7 +52,41 @@ public abstract class BaseDemoActivity extends FragmentActivity implements OnMap
             return;
         }
         mMap = map;
+        getMap().setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+            @Override
+            public void onCameraMoveStarted(int i) {
+//                mDragTimer.start();
+//                mTimerIsRunning = true;
+                Log.d("camera", "hiiiStart");
+            }
+        });
+
+        getMap().setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+
+
+                Log.d("camera", "hiiiIdle");
+                // Cleaning all the markers.
+//                if (mGoogleMap != null) {
+//                    mGoogleMap.clear();
+//                }
+//
+//                mPosition = mGoogleMap.getCameraPosition().target;
+//                mZoom = mGoogleMap.getCameraPosition().zoom;
+//
+//                if (mTimerIsRunning) {
+//                    mDragTimer.cancel();
+//                }
+
+            }
+        });
+
         startDemo();
+
+
+
+
     }
 
     protected void setUpMap() {

@@ -143,10 +143,10 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             Log.d("length cluster", String.valueOf(cluster.getItems().size()));
             int tryGetCounter = 0;
             for (Program p : cluster.getItems()) {
-                if(!bounds.contains(p.getPosition())) {
-                    Log.d("Not in screen", p.opTitle);
-                    return;
-                }
+//                if(!bounds.contains(p.getPosition())) {
+//                    Log.d("Not in screen", p.opTitle);
+//                    return;
+//                }
                 Log.d("try get conter", p.opTitle + String.valueOf(tryGetCounter));
                 tryGetCounter++;
                 if(tryGetCounter > TRY_GET_COUNT_MAX){
@@ -169,6 +169,7 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
             drawable = new BitmapDrawable(getResources(), bmp);
             drawable.setBounds(0, 0, width, height);
             profilePhotos.add(drawable);}
+
 
 
 //            if(drawable == null) return;
@@ -321,10 +322,12 @@ public class StoryMapClusterActivity extends BaseDemoActivity implements Cluster
         getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                FloatingActionButton homeBtn = (FloatingActionButton)findViewById(R.id.homeBtn);
+                FloatingActionButton homeBtn = (FloatingActionButton) findViewById(R.id.homeBtn);
                 homeBtn.performClick();
             }
         });
+
+
 
 
 
